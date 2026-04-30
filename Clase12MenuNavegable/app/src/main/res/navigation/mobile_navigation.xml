@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_transform">
+
+    <fragment
+        android:id="@+id/nav_transform"
+        android:name="com.ulp.clase12menunavegable.ui.transform.TransformFragment"
+        android:label="@string/menu_transform"
+        tools:layout="@layout/fragment_transform" />
+
+    <fragment
+        android:id="@+id/nav_reflow"
+        android:name="com.ulp.clase12menunavegable.ui.reflow.ReflowFragment"
+        android:label="@string/menu_reflow"
+        tools:layout="@layout/fragment_reflow" />
+
+    <fragment
+        android:id="@+id/nav_slideshow"
+        android:name="com.ulp.clase12menunavegable.ui.slideshow.SlideshowFragment"
+        android:label="@string/menu_slideshow"
+        tools:layout="@layout/fragment_slideshow" />
+
+    <fragment
+        android:id="@+id/nav_salir"
+        android:name="com.ulp.clase12menunavegable.ui.salir.SalirFragment"
+        android:label="@string/salir"
+        tools:layout="@layout/fragment_salir" />
+    <fragment
+        android:id="@+id/nav_calculo"
+        android:name="com.ulp.clase12menunavegable.ui.calculos.CalculoFragment"
+        android:label="@string/calculo"
+        tools:layout="@layout/fragment_calculo" >
+        <action
+            android:id="@+id/action_nav_calculo_to_resultadoFragment"
+            app:destination="@id/nav_resultado" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_resultado"
+        android:name="com.ulp.clase12menunavegable.ui.calculos.ResultadoFragment"
+        android:label="@string/resultado"
+        tools:layout="@layout/fragment_resultado" >
+        <action
+            android:id="@+id/action_nav_resultado_to_nav_calculo"
+            app:destination="@id/nav_calculo" />
+    </fragment>
+</navigation>
