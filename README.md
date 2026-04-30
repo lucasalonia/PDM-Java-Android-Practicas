@@ -2,7 +2,7 @@
 
 Este repositorio centraliza las aplicaciones desarrolladas durante el cursado de la asignatura. Cada proyecto explora diferentes componentes del ecosistema Android, desde la gestión de interfaces hasta el uso de hardware específico como sensores y GPS.
 
-## 🛠️ Ficha Técnica General
+## Ficha Técnica General
 Todas las aplicaciones comparten los siguientes estándares técnicos:
 
 *   **IDE:** Android Studio
@@ -14,14 +14,14 @@ Todas las aplicaciones comparten los siguientes estándares técnicos:
 
 ---
 
-## 📂 Proyectos Incluidos
+## Proyectos Incluidos
 
 | Carpeta | Temática / Conceptos Clave |
 | :--- | :--- |
 | **ClaseDos / Clase4** | Fundamentos de Activities y ciclo de vida básico. |
 | **Clase5BroadcastReceiver** | Implementación de receptores de anuncios del sistema. |
 | **Clase6Servicios** | Ejecución de tareas en segundo plano mediante Services. |
-| **Clase7_Views** | Manejo avanzado de vistas y componentes de interfaz. |
+| **Clase7_Views** | Manejo  de vistas y componentes de interfaz. |
 | **Clase8PracticaVM / VMYDobleView** | Introducción a arquitectura y manejo de múltiples vistas. |
 | **Clase9ListVieww** | Listas clásicas mediante el componente ListView. |
 | **Clase10RecycleView_CardView** | Listas optimizadas con RecyclerView y diseño de tarjetas. |
