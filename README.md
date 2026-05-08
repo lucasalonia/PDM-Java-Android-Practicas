@@ -53,11 +53,34 @@ Proyecto inicial de la cursada. Sirve para familiarizarse con la estructura de u
 - `EdgeToEdge.enable(this)` habilita que el contenido de la app se dibuje detrás de las barras del sistema (status bar y navigation bar), dando una apariencia de pantalla completa.
 - `ViewCompat.setOnApplyWindowInsetsListener` aplica padding dinámico a la vista raíz para que el contenido no quede tapado por las barras del sistema.
 
-### Estructura del layout
+### Layout XML
 
-El layout `activity_main.xml` contiene dos `TextView` dentro de un `ConstraintLayout`:
-- `textOne` — texto azul, 30sp
-- `textTwo` — texto rojo, 20sp
+**`activity_main.xml`**
+
+```xml
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:background="@color/background">
+
+    <TextView
+        android:id="@+id/textOne"
+        android:layout_width="206dp"
+        android:layout_height="90dp"
+        android:text="@string/textOne"
+        android:textColor="@color/blue"
+        android:textSize="30sp" />
+
+    <TextView
+        android:id="@+id/textTwo"
+        android:layout_width="163dp"
+        android:layout_height="65dp"
+        android:text="@string/textTwo"
+        android:textColor="@color/red"
+        android:textSize="20sp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+> Los textos se definen en `res/values/strings.xml` y los colores en `res/values/colors.xml`, siguiendo la buena práctica de no hardcodear strings ni colores en el layout. `@color/background` define el fondo general de la pantalla.
 
 ---
 
@@ -164,6 +187,44 @@ if (cursor.getCount() > 0) {
 
 > `StringBuilder` se usa para concatenar cadenas de texto de manera eficiente, evitando crear múltiples objetos `String` inmutables en el heap.
 
+### Layout XML
+
+**`activity_main.xml`** — pantalla de entrada
+
+```xml
+<androidx.constraintlayout.widget.ConstraintLayout>
+
+    <EditText
+        android:id="@+id/editTextDato"
+        android:layout_width="match_parent"
+        android:inputType="text"
+        android:text="Nombre" />
+
+    <Button
+        android:id="@+id/btSiguiente"
+        android:text="Siguiente"
+        app:layout_constraintTop_toBottomOf="@+id/editTextDato" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+> El `EditText` con `inputType="text"` activa el teclado alfanumérico. El `Button` se posiciona debajo del `EditText` usando `constraintTop_toBottomOf`.
+
+**`activity_second.xml`** — pantalla de destino
+
+```xml
+<androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/textShow"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+> El `TextView` ocupa toda la pantalla (`match_parent` en ancho y alto) para poder mostrar el historial de llamadas completo, que puede ser extenso.
+
 ---
 
 ## 3. `Clase5BroadcastReceiver` — BroadcastReceiver y Eventos del Sistema
@@ -241,6 +302,23 @@ protected void onStop() {
 ```
 
 > El registro dinámico (en código) es la forma recomendada para eventos que solo importan cuando la app está en primer plano. El registro estático (en `AndroidManifest.xml`) es para eventos que deben recibirse aunque la app esté cerrada.
+
+### Layout XML
+
+**`activity_main.xml`** — no tiene UI funcional
+
+```xml
+<androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hello World!" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+> La UI de esta app es intencionalmente mínima porque toda la lógica vive en el `BroadcastReceiver`. La información al usuario se comunica exclusivamente a través de `Toast.makeText()`, que no requiere ningún componente en el layout.
 
 ---
 
@@ -346,6 +424,23 @@ trabajador.start();
 ```
 
 > Nota: Un `Toast` no puede mostrarse desde un hilo secundario directamente. Para producción se debe usar `runOnUiThread` o `postValue` de LiveData.
+
+### Layout XML
+
+**`activity_main.xml`** — no tiene UI funcional
+
+```xml
+<androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hello World!" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+> Al igual que en `Clase5`, la UI está vacía porque el `Service` corre en segundo plano. No hay botones ni textos que interactúen con el usuario; el servicio se inicia automáticamente en `onResume()` y todo el proceso (reproducción de audio) ocurre sin intervención del usuario.
 
 ---
 
@@ -454,6 +549,53 @@ binding.contar.setOnClickListener(new View.OnClickListener() {
 });
 ```
 
+### Layout XML
+
+**`activity_main.xml`** — la misma pantalla tiene dos funcionalidades: contador y traductor
+
+```xml
+<androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- SECCIÓN CONTADOR -->
+    <TextView android:id="@+id/textView2"
+        android:text="Contador"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/mostrar" />
+
+    <TextView android:id="@+id/mostrar"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.257" />
+
+    <Button android:id="@+id/contar"
+        android:text="+"
+        android:textSize="24sp"
+        app:layout_constraintTop_toBottomOf="@+id/mostrar" />
+
+    <!-- SECCIÓN TRADUCTOR -->
+    <TextView android:id="@+id/textView3"
+        android:text="Traductor"
+        android:textSize="30sp"
+        app:layout_constraintTop_toBottomOf="@+id/contar" />
+
+    <EditText android:id="@+id/traducirTexto"
+        android:layout_width="158dp"
+        android:inputType="text"
+        app:layout_constraintTop_toBottomOf="@+id/textView3" />
+
+    <Button android:id="@+id/btTraducir"
+        app:layout_constraintTop_toBottomOf="@+id/traducirTexto" />
+
+    <TextView android:id="@+id/mostrarTraduccion"
+        app:layout_constraintTop_toBottomOf="@+id/btTraducir" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+> Esta pantalla combina dos funcionalidades independientes en un mismo layout. Los ids `mostrar`, `contar`, `traducirTexto`, `btTraducir` y `mostrarTraduccion` son los que el View Binding genera como atributos de `ActivityMainBinding`, accesibles como `binding.mostrar`, `binding.contar`, etc.
+
 ---
 
 ## 6. `Clase8PracticaVM` — ViewModel con Modelo de Datos y Navegación desde el VM
@@ -544,6 +686,49 @@ vm.getPersonaMutable().observe(this, new Observer<Persona>() {
 vm.obtenerNombre(getIntent().getStringExtra("nombre"));
 ```
 
+### Layout XML
+
+**`activity_main.xml`** — busca un alumno por nombre
+
+```xml
+<androidx.constraintlayout.widget.ConstraintLayout>
+
+    <EditText android:id="@+id/etAlumno"
+        android:layout_width="241dp"
+        android:inputType="text"
+        android:text="Name"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button android:id="@+id/btBuscar"
+        android:text="Button"
+        app:layout_constraintTop_toBottomOf="@+id/etAlumno" />
+
+    <TextView android:id="@+id/tvAlumnoEncontrado"
+        android:text="TextView"
+        app:layout_constraintTop_toBottomOf="@+id/btBuscar" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+**`activity_second.xml`** — muestra los datos del alumno encontrado
+
+```xml
+<androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView android:id="@+id/tvNombre"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView android:id="@+id/tvApellido"
+        app:layout_constraintTop_toBottomOf="@+id/tvNombre" />
+
+    <TextView android:id="@+id/tvEmail"
+        app:layout_constraintTop_toBottomOf="@+id/tvApellido" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+> Los tres `TextView` de `activity_second.xml` no tienen texto inicial (`android:text` ausente), a diferencia de `Clase8VMYDobleView` donde aparecen con `"TextView"` como placeholder. Todos se llenan en tiempo de ejecución a través del Observer del ViewModel.
+
 ---
 
 ## 7. `Clase8VMYDobleView` — Doble Activity con ViewModels Independientes
@@ -566,6 +751,53 @@ Refuerza el patrón de dos Activities con un ViewModel independiente para cada u
 | LiveData en SecondActivity | 3 separados (`nombre`, `apellido`, `email`) | 1 de tipo `Persona` |
 | Observadores en la Activity | 3 observers distintos | 1 observer que desempaqueta el objeto |
 | Mantenimiento | Más código, más verboso | Más limpio y escalable |
+
+### Layout XML
+
+**`activity_main.xml`** — primera pantalla: busca por nombre
+
+```xml
+<androidx.constraintlayout.widget.ConstraintLayout>
+
+    <EditText android:id="@+id/etNombre"
+        android:layout_width="248dp"
+        android:hint="Ingrese nombre"
+        android:inputType="text"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button android:id="@+id/bBuscar"
+        android:text="Buscar"
+        app:layout_constraintTop_toBottomOf="@+id/etNombre" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+> El atributo `android:hint` muestra texto de ayuda en gris cuando el campo está vacío, sin que sea el valor real. A diferencia de `Clase8PracticaVM`, acá se usa `hint` en lugar de `android:text` — mejor práctica para campos de entrada.
+
+**`activity_segunda.xml`** — segunda pantalla: muestra datos
+
+```xml
+<androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView android:id="@+id/tvNombre"
+        android:layout_width="277dp"
+        android:layout_height="65dp"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView android:id="@+id/tvApellido"
+        android:layout_width="277dp"
+        android:layout_height="65dp"
+        app:layout_constraintTop_toBottomOf="@+id/tvNombre" />
+
+    <TextView android:id="@+id/tvEmail"
+        android:layout_width="277dp"
+        android:layout_height="65dp"
+        app:layout_constraintTop_toBottomOf="@+id/tvApellido" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+> Los `TextView` tienen dimensiones fijas (`277dp × 65dp`) para dar espacio visual a cada campo. Todos sin texto inicial, se llenan desde el Observer del ViewModel.
 
 ---
 
@@ -710,6 +942,84 @@ public void recuperarPersona(Intent intent) {
     }
 }
 ```
+
+### Layout XML
+
+**`activity_main.xml`** — contiene solo el `ListView`
+
+```xml
+<androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ListView
+        android:id="@+id/listado"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="1dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+> El `ListView` con `match_parent` en ancho y alto ocupa toda la pantalla. El `margin` de 1dp evita que el primer y último ítem queden pegados al borde.
+
+**`item.xml`** — plantilla de cada fila de la lista
+
+```xml
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView android:id="@+id/foto"
+        android:layout_width="300px"
+        android:layout_height="300px"
+        android:layout_marginTop="56dp"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView android:id="@+id/apellido"
+        android:layout_width="match_parent"
+        app:layout_constraintTop_toBottomOf="@+id/foto" />
+
+    <TextView android:id="@+id/nombre"
+        android:layout_width="match_parent"
+        app:layout_constraintTop_toBottomOf="@+id/apellido" />
+
+    <TextView android:id="@+id/correo"
+        android:layout_width="match_parent"
+        app:layout_constraintTop_toBottomOf="@+id/nombre" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+> La imagen usa `px` (píxeles físicos) en lugar de `dp`. Esto hace que el tamaño varíe según la densidad de pantalla del dispositivo. La práctica recomendada es usar `dp` para que el diseño sea consistente en todos los dispositivos.
+
+**`activity_detalle.xml`** — pantalla de detalle al tocar un ítem
+
+```xml
+<androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ImageView android:id="@+id/fotoDetalle"
+        android:layout_width="406dp"
+        android:layout_height="197dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView android:id="@+id/apellidoDetalle"
+        android:layout_width="match_parent"
+        app:layout_constraintTop_toBottomOf="@+id/fotoDetalle" />
+
+    <TextView android:id="@+id/nombreDetalle"
+        android:layout_width="match_parent"
+        android:layout_marginTop="76dp"
+        app:layout_constraintTop_toBottomOf="@+id/fotoDetalle" />
+
+    <TextView android:id="@+id/correoDetalle"
+        android:layout_width="match_parent"
+        android:layout_marginTop="108dp"
+        app:layout_constraintTop_toBottomOf="@+id/fotoDetalle" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+> Los tres `TextView` de detalle (apellido, nombre, correo) están todos anclados al `fotoDetalle` con distintos `marginTop`, lo que los apila visualmente debajo de la imagen. La imagen tiene un ancho de `406dp` (ancho casi completo en un teléfono estándar).
 
 ---
 
@@ -873,6 +1183,67 @@ public void dormir() {
 }
 ```
 
+### Layout XML
+
+**`activity_main.xml`** — contiene solo el `RecyclerView`
+
+```xml
+<androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/lista"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="1dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+> Igual que en `Clase9`, el componente de lista ocupa toda la pantalla. La diferencia es que aquí el componente es `RecyclerView` en lugar de `ListView`. El `RecyclerView` no sabe cómo mostrar los ítems por sí solo: necesita que la Activity le asigne tanto un `Adapter` como un `LayoutManager`.
+
+**`item.xml`** — plantilla de cada tarjeta (`CardView` como raíz)
+
+```xml
+<androidx.cardview.widget.CardView
+    android:id="@+id/cvEjemplo"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardBackgroundColor="#02032A"
+    app:cardCornerRadius="30dp"
+    app:cardElevation="20dp"
+    app:contentPadding="30dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:background="@drawable/fondo">
+
+        <TextView android:id="@+id/tvDireccion"
+            android:layout_width="match_parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView android:id="@+id/tvPrecio"
+            android:layout_width="match_parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvDireccion" />
+
+        <TextView android:id="@+id/tvSuperficie"
+            android:layout_width="match_parent"
+            app:layout_constraintTop_toTopOf="@+id/tvPrecio" />
+
+        <ImageView android:id="@+id/ivFoto"
+            android:layout_width="200px"
+            app:layout_constraintTop_toBottomOf="@+id/tvSuperficie" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>
+```
+
+> El `CardView` es el **nodo raíz** del ítem. Sus atributos clave:
+> - `cardBackgroundColor="#02032A"` — fondo casi negro para la tarjeta
+> - `cardCornerRadius="30dp"` — esquinas muy redondeadas
+> - `cardElevation="20dp"` — sombra pronunciada para efecto de profundidad
+> - `contentPadding="30dp"` — espacio interno entre el borde de la tarjeta y su contenido
+>
+> El `ConstraintLayout` interno tiene `android:background="@drawable/fondo"`, que aplica un drawable personalizado como fondo visual dentro de la tarjeta. La imagen del inmueble usa `200px` de ancho (en píxeles físicos), lo que puede verse diferente en distintas densidades de pantalla.
+
 ---
 
 ## 10. `Clase12MenuNavegable` — Navigation Component, DrawerLayout y Bottom Navigation
@@ -987,6 +1358,128 @@ public void recuperarDatos(Bundle bundle) {
     }
 }
 ```
+
+### Layout XML
+
+La app tiene una estructura de layouts anidados en varios archivos:
+
+**`activity_main.xml`** — contenedor raíz con `DrawerLayout`
+
+```xml
+<FrameLayout android:id="@+id/activity_container">
+
+    <androidx.drawerlayout.widget.DrawerLayout
+        android:id="@+id/drawer_layout"
+        android:fitsSystemWindows="true">
+
+        <!-- Contenido principal: toolbar + fragments -->
+        <include android:id="@+id/app_bar_main" layout="@layout/app_bar_main" />
+
+        <!-- Menú lateral deslizable (hamburguesa) -->
+        <com.google.android.material.navigation.NavigationView
+            android:id="@+id/nav_view"
+            android:layout_gravity="start"
+            android:background="#85B7E8"
+            app:headerLayout="@layout/nav_header_main"
+            app:menu="@menu/navigation_drawer" />
+
+    </androidx.drawerlayout.widget.DrawerLayout>
+</FrameLayout>
+```
+
+> El `DrawerLayout` es el componente que hace que el menú lateral se "deslice" desde el borde izquierdo. `android:layout_gravity="start"` posiciona el menú a la izquierda. `app:headerLayout` agrega una cabecera visual en el drawer y `app:menu` define los ítems del menú navegable desde un archivo XML en `res/menu/`.
+
+**`app_bar_main.xml`** — barra superior y contenedor de fragments
+
+```xml
+<androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <com.google.android.material.appbar.AppBarLayout>
+        <androidx.appcompat.widget.Toolbar android:id="@+id/toolbar" />
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <include android:id="@+id/content_main" layout="@layout/content_main" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
+```
+
+> `CoordinatorLayout` es necesario para que la `Toolbar` y el contenido se coordinen visualmente (por ejemplo, que el contenido no quede tapado). El `include` de `content_main` mantiene los archivos modulares y más fáciles de mantener.
+
+**`content_main.xml`** — área de fragments y barra inferior
+
+```xml
+<LinearLayout android:orientation="vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    <!-- Contenedor donde el NavController intercambia los fragments -->
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/nav_host_fragment_content_main"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_weight="1"
+        app:defaultNavHost="true"
+        app:navGraph="@navigation/mobile_navigation" />
+
+    <!-- Barra de navegación inferior -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_nav_view"
+        android:layout_height="56dp"
+        app:menu="@menu/bottom_navigation" />
+
+</LinearLayout>
+```
+
+> `FragmentContainerView` con `android:layout_weight="1"` toma todo el espacio disponible excepto los 56dp que ocupa el `BottomNavigationView`. `app:navGraph="@navigation/mobile_navigation"` referencia el grafo de navegación que define todos los fragments y sus acciones. `app:defaultNavHost="true"` hace que este contenedor intercepte el botón Atrás del sistema.
+
+**`fragment_calculo.xml`** — pantalla de ingreso de números
+
+```xml
+<androidx.constraintlayout.widget.ConstraintLayout>
+
+    <EditText android:id="@+id/etNumero1"
+        android:layout_width="215dp"
+        android:inputType="text"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText android:id="@+id/etNumero2"
+        android:layout_width="216dp"
+        android:inputType="text"
+        app:layout_constraintTop_toBottomOf="@+id/etNumero1" />
+
+    <!-- Botón de suma, alineado a la izquierda -->
+    <Button android:id="@+id/btCalcularSuma"
+        app:layout_constraintHorizontal_bias="0.1"
+        app:layout_constraintTop_toBottomOf="@+id/etNumero2" />
+
+    <!-- Botón de resta, alineado a la derecha con marginEnd -->
+    <Button android:id="@+id/btResta"
+        android:layout_marginEnd="68dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/etNumero2" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+> Los dos botones están en la misma fila pero posicionados en extremos opuestos: `btCalcularSuma` usa `horizontal_bias="0.1"` (cerca del borde izquierdo) y `btResta` usa `constraintEnd_toEndOf` con `marginEnd` (hacia el borde derecho).
+
+**`fragment_resultado.xml`** — pantalla de resultado
+
+```xml
+<androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView android:id="@+id/tvTipo"
+        android:textSize="34sp"
+        android:layout_marginTop="116dp"
+        app:layout_constraintTop_toTopOf="@+id/tvResultado" />
+
+    <TextView android:id="@+id/tvResultado"
+        android:textSize="34sp"
+        android:layout_marginTop="240dp"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+> `tvTipo` muestra el tipo de operación ("La operación fue una suma") y `tvResultado` muestra el número. Ambos tienen `textSize="34sp"` para ser fácilmente legibles. `tvTipo` está anclado a `tvResultado` con un margen negativo (`116dp` sobre los `240dp` de `tvResultado`), lo que lo posiciona visualmente encima del resultado.
 
 ---
 
@@ -1118,6 +1611,28 @@ public void desactivarLecturas() {
 }
 ```
 
+### Layout XML
+
+**`activity_main.xml`** — un solo `TextView` centrado
+
+```xml
+<androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/tvMostrarLoc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hello World!"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+> El layout es mínimo: un único `TextView` centrado en pantalla que muestra las coordenadas GPS en formato `"latitudX.X longX.X"`. No hay botones porque la lectura comienza automáticamente al iniciar la Activity. Toda la interacción con el hardware ocurre en el ViewModel.
+
 ---
 
 ## 12. `Clase16GoogleMaps` — Integración de Google Maps
@@ -1200,6 +1715,24 @@ viewModel.getMapaActual().observe(this, new Observer<MainActivityViewModel.MapaA
     }
 });
 ```
+
+### Layout XML
+
+**`activity_main.xml`** — el mapa ocupa toda la pantalla
+
+```xml
+<androidx.constraintlayout.widget.ConstraintLayout>
+
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+> Se usa la etiqueta `<fragment>` (no `<FragmentContainerView>`) con `android:name` apuntando directamente a `SupportMapFragment`. Esto es el modo de integración estático del mapa: el fragment se crea al inflar el layout. El `id="@+id/map"` es el que usa `getSupportFragmentManager().findFragmentById(R.id.map)` en la Activity para obtener la referencia al mapa.
 
 ---
 
@@ -1284,6 +1817,28 @@ private class ManejaEventos implements SensorEventListener {
 
 > **Nota importante:** `SensorManager.registerListener()` debe emparejarse con `SensorManager.unregisterListener()` en `onPause()` para evitar consumo innecesario de batería cuando la app no está en primer plano.
 
+### Layout XML
+
+**`activity_main.xml`** — un único `TextView` centrado
+
+```xml
+<androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/mostrar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hello World!"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+> El layout es deliberadamente simple: un `TextView` centrado que recibe el texto desde el Observer del ViewModel. Puede mostrar tanto la lista completa de nombres de sensores (separados por `\n`) como los valores en tiempo real del acelerómetro (`"X: 0.1 Y: 9.8 Z: 0.0"`), dependiendo de qué método se llame en el ViewModel.
+
 ---
 
 ## 14. `Clase18SharedPreference` — Persistencia con SharedPreferences
@@ -1363,6 +1918,59 @@ binding.btMostrar.setOnClickListener(v -> {
 ```
 
 > **`commit()` vs `apply()`:** `commit()` escribe de forma síncrona y devuelve un `boolean`. `apply()` escribe de forma asíncrona y no devuelve resultado. Para confirmar el éxito de la escritura se recomienda `commit()`.
+
+### Layout XML
+
+**`activity_main.xml`** — pantalla para guardar datos
+
+```xml
+<androidx.constraintlayout.widget.ConstraintLayout>
+
+    <EditText android:id="@+id/etNombre"
+        android:layout_width="213dp"
+        android:hint="Nombre"
+        android:inputType="text"
+        app:layout_constraintBottom_toTopOf="@+id/etEdad" />
+
+    <EditText android:id="@+id/etEdad"
+        android:layout_width="215dp"
+        android:hint="Edad"
+        android:inputType="number"
+        android:layout_marginTop="196dp"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button android:id="@+id/btGuardar"
+        android:text="Guardar"
+        app:layout_constraintTop_toBottomOf="@+id/etEdad" />
+
+    <Button android:id="@+id/btMostrar"
+        android:text="Mostrar"
+        app:layout_constraintTop_toBottomOf="@+id/btGuardar" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+> `etEdad` usa `inputType="number"` para que el teclado muestre solo números. `etNombre` usa `inputType="text"`. Ambos usan `android:hint` en lugar de `android:text` para mostrar texto de ayuda sin ser el valor real del campo. Los dos botones están apilados verticalmente.
+
+**`activity_mostrar.xml`** — pantalla para mostrar los datos guardados
+
+```xml
+<androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView android:id="@+id/tvNombre"
+        android:textSize="34sp"
+        android:layout_marginTop="68dp"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView android:id="@+id/tvEdad"
+        android:textSize="34sp"
+        android:layout_marginTop="48dp"
+        app:layout_constraintTop_toBottomOf="@+id/tvNombre" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+> Dos `TextView` con `textSize="34sp"` para mostrar los datos recuperados de `SharedPreferences`. No hay `EditText` ni botones porque esta pantalla es solo de lectura. Los datos no vienen por `Intent` sino que el ViewModel los lee directamente de `datos.xml`.
 
 ---
 
